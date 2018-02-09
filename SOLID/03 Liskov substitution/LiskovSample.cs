@@ -2,64 +2,86 @@
 
 namespace SOLID._03_Liskov_substitution
 {
-    public abstract class Employee
+    public interface IEmployee
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
+        int ID { get; set; }
+        string Name { get; set; }
 
+        decimal GetMinimumSalary();
+    }
+    public interface IEmployeeWithBonus
+    {
+        decimal CalculateBonus(decimal salary);
+    }
+
+    public abstract class Employee : IEmployee
+    {
+        public Employee(int iD, string name)
+        {
+            this.ID = iD;
+            this.Name = name;
+
+        }
         public Employee()
         {
+
         }
-
-        public Employee(int id, string name)
-        {
-            this.ID = id; this.Name = name;
-        }
-
-        public abstract decimal CalculateBonus(decimal salary);
-
+        public int ID { get; set; }
+        public string Name { get; set; }
         public override string ToString()
         {
             return string.Format("ID : {0} Name : {1}", this.ID, this.Name);
         }
+
+        public abstract decimal GetMinimumSalary();
     }
 
-    public class PermanentEmployee : Employee
+    public class ContractEmployee : Employee
     {
+        public ContractEmployee(int iD, string name) : base(iD, name)
+        { }
+        public ContractEmployee()
+        { }
+
+        public override decimal GetMinimumSalary()
+        {
+            return 0;
+        }
+    }
+
+    public class PermanentEmployee : Employee, IEmployeeWithBonus
+    {
+
         public PermanentEmployee()
         { }
 
         public PermanentEmployee(int id, string name) : base(id, name)
         { }
-        public override decimal CalculateBonus(decimal salary)
+        public decimal CalculateBonus(decimal salary)
         {
             return salary * .1M;
         }
-    }
 
-    public class TemporaryEmployee : Employee
-    {
-        public TemporaryEmployee()
-        { }
-
-        public TemporaryEmployee(int id, string name) : base(id, name)
-        { }
-        public override decimal CalculateBonus(decimal salary)
+        public override decimal GetMinimumSalary()
         {
-            return salary * .05M;
+            return 0;
         }
     }
 
-    public class ContractEmployee : Employee
+    public class TemporaryEmployee : Employee, IEmployeeWithBonus
     {
-        public ContractEmployee()
+        public TemporaryEmployee(int iD, string name)
         { }
-
-        public ContractEmployee(int id, string name) : base(id, name)
+        public TemporaryEmployee()
         { }
-        public override decimal CalculateBonus(decimal salary)
+        public decimal CalculateBonus(decimal salary)
         {
-            throw new NotImplementedException();
+            return salary * .05M;
+        }
+
+        public override decimal GetMinimumSalary()
+        {
+            return 0;
         }
     }
 }
